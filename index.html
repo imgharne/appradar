@@ -884,7 +884,9 @@
     }, 700);
 
     try {
-      const url = `https://corsproxy.io/?https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
+      const appleUrl = `https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(appleUrl)}`;
+      //const url = `https://corsproxy.io/?https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
