@@ -7,686 +7,199 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080c14;
-    --surface: #0d1320;
-    --surface2: #131b2e;
-    --border: #1e2d47;
-    --accent: #3b82f6;
-    --accent2: #06b6d4;
-    --accent3: #8b5cf6;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --subtle: #1e2d47;
+    --bg: #080c14; --surface: #0d1320; --surface2: #131b2e;
+    --border: #1e2d47; --accent: #3b82f6; --accent2: #06b6d4;
+    --accent3: #8b5cf6; --success: #10b981; --warning: #f59e0b;
+    --danger: #ef4444; --text: #e2e8f0; --muted: #64748b; --subtle: #1e2d47;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* Grid background */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.4; }
+  body::after { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(59,130,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.04) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; z-index:0; }
+  .container { max-width:1500px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
 
   /* HEADER */
-  header {
-    padding: 28px 0 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 0 20px rgba(59,130,246,0.4);
-  }
-
-  .logo-text {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(90deg, #e2e8f0, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .logo-text span {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.3);
-    color: var(--success);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-family: 'DM Mono', monospace;
-    font-weight: 500;
-  }
-
-  .live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--success);
-    animation: pulse-dot 1.5s infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
+  header { padding:28px 0 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent3)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 0 20px rgba(59,130,246,0.4); }
+  .logo-text { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; letter-spacing:-0.5px; background:linear-gradient(90deg,#e2e8f0,#94a3b8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .logo-text span { background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .live-badge { display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--success); padding:5px 12px; border-radius:20px; font-size:12px; font-family:'DM Mono',monospace; }
+  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--success); animation:pulse-dot 1.5s infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
 
   /* CONTROLS */
-  .controls {
-    padding: 24px 0;
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .controls { padding:24px 0; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .control-group { display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px; }
+  .control-label { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  select { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 32px 10px 14px; border-radius:8px; font-size:14px; font-family:'DM Sans',sans-serif; cursor:pointer; outline:none; transition:border-color 0.2s; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; }
+  select:hover,select:focus { border-color:var(--accent); }
+  .fetch-btn { background:linear-gradient(135deg,var(--accent),var(--accent3)); color:white; border:none; padding:10px 28px; border-radius:8px; font-size:14px; font-family:'Syne',sans-serif; font-weight:700; cursor:pointer; transition:all 0.2s; align-self:flex-end; white-space:nowrap; box-shadow:0 0 20px rgba(59,130,246,0.25); }
+  .fetch-btn:hover { transform:translateY(-1px); box-shadow:0 4px 30px rgba(59,130,246,0.4); }
+  .fetch-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
 
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 160px;
-  }
+  /* STATS */
+  .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; position:relative; overflow:hidden; opacity:0; animation:fadeUp 0.4s forwards; }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); opacity:0.7; }
+  .stat-value { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; background:linear-gradient(135deg,#e2e8f0,#94a3b8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:3px; }
+  .stat-label { font-size:10px; color:var(--muted); font-family:'DM Mono',monospace; }
 
-  .control-label {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  /* LAYOUT */
+  .main-grid { display:grid; grid-template-columns:1fr 370px; gap:20px; align-items:start; }
+  @media(max-width:1100px){.main-grid{grid-template-columns:1fr;}}
 
-  select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-  }
-
-  select:hover, select:focus { border-color: var(--accent); }
-
-  .fetch-btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: white;
-    border: none;
-    padding: 10px 28px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: all 0.2s;
-    align-self: flex-end;
-    white-space: nowrap;
-    box-shadow: 0 0 20px rgba(59,130,246,0.25);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .fetch-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 30px rgba(59,130,246,0.4); }
-  .fetch-btn:active { transform: translateY(0); }
-  .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  /* STATS ROW */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: fadeUp 0.4s forwards;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    opacity: 0.7;
-  }
-
-  .stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 4px;
-  }
-
-  .stat-label { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-  /* MAIN GRID */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 20px;
-    align-items: start;
-  }
-
-  @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
-
-  /* TABLE PANEL */
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    opacity: 0;
-    animation: fadeUp 0.5s 0.1s forwards;
-  }
-
-  .panel-header {
-    padding: 18px 22px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .panel-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .panel-title-icon {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-  }
-
-  .count-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    background: var(--subtle);
-    color: var(--muted);
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-left: auto;
-  }
+  /* PANEL */
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; opacity:0; animation:fadeUp 0.5s 0.1s forwards; }
+  .panel-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .panel-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; display:flex; align-items:center; gap:10px; }
+  .panel-title-icon { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; }
+  .count-badge { font-family:'DM Mono',monospace; font-size:11px; background:var(--subtle); color:var(--muted); padding:3px 10px; border-radius:20px; margin-left:auto; }
 
   /* SEARCH */
-  .search-wrap {
-    padding: 14px 22px;
-    border-bottom: 1px solid var(--border);
-  }
+  .search-wrap { padding:12px 20px; border-bottom:1px solid var(--border); }
+  .search-input { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:8px 14px 8px 34px; border-radius:8px; font-size:13px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.2s; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:11px center; }
+  .search-input:focus { border-color:var(--accent); }
 
-  .search-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 9px 14px 9px 36px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 12px center;
-  }
+  /* TABLE ROWS */
+  .app-row { display:grid; grid-template-columns:42px 44px 1fr auto 34px; gap:12px; align-items:center; padding:11px 20px; border-bottom:1px solid rgba(30,45,71,0.5); cursor:pointer; transition:background 0.15s; animation:slideIn 0.3s forwards; opacity:0; }
+  .app-row:last-child { border-bottom:none; }
+  .app-row:hover { background:var(--surface2); }
+  .app-row.selected { background:rgba(59,130,246,0.06); border-left:2px solid var(--accent); padding-left:18px; }
+  .rank-num { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; color:var(--muted); text-align:center; }
+  .rank-num.top3 { font-size:16px; font-weight:600; background:linear-gradient(135deg,var(--warning),#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .app-icon { width:44px; height:44px; border-radius:10px; object-fit:cover; background:var(--surface2); border:1px solid var(--border); }
+  .app-icon-placeholder { width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--surface2),var(--border)); display:flex; align-items:center; justify-content:center; font-size:18px; border:1px solid var(--border); }
+  .app-info { min-width:0; }
+  .app-name { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px; }
+  .app-dev { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .app-meta { text-align:right; }
+  .stars { font-size:10px; color:var(--warning); margin-bottom:3px; white-space:nowrap; }
+  .price-tag { font-size:10px; font-family:'DM Mono',monospace; padding:2px 7px; border-radius:4px; display:inline-block; }
+  .price-free { background:rgba(16,185,129,0.12); color:var(--success); }
+  .price-paid { background:rgba(59,130,246,0.12); color:var(--accent); }
 
-  .search-input:focus { border-color: var(--accent); }
+  /* ↗ App Store button on each row */
+  .row-store-btn { width:28px; height:28px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.25); border-radius:7px; display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:13px; text-decoration:none; transition:all 0.15s; flex-shrink:0; font-family:'DM Mono',monospace; }
+  .row-store-btn:hover { background:var(--accent); color:white; border-color:var(--accent); transform:scale(1.12); }
 
-  /* APP TABLE */
-  .app-table { width: 100%; }
+  /* SIDE */
+  .side-panels { display:flex; flex-direction:column; gap:18px; }
 
-  .app-row {
-    display: grid;
-    grid-template-columns: 44px 44px 1fr auto;
-    gap: 14px;
-    align-items: center;
-    padding: 13px 22px;
-    border-bottom: 1px solid rgba(30,45,71,0.6);
-    cursor: pointer;
-    transition: background 0.15s;
-    animation: slideIn 0.3s forwards;
-    opacity: 0;
-  }
+  /* DETAIL */
+  .detail-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; opacity:0; animation:fadeUp 0.5s 0.2s forwards; }
+  .detail-empty { padding:32px 24px; text-align:center; color:var(--muted); }
+  .detail-empty-icon { font-size:30px; margin-bottom:10px; }
+  .detail-empty-text { font-size:12px; line-height:1.6; }
+  .detail-hero { background:linear-gradient(135deg,var(--surface2),var(--bg)); padding:16px 20px; border-bottom:1px solid var(--border); display:flex; gap:13px; align-items:flex-start; }
+  .detail-icon { width:58px; height:58px; border-radius:13px; object-fit:cover; flex-shrink:0; border:1px solid var(--border); }
+  .detail-icon-placeholder { width:58px; height:58px; border-radius:13px; background:linear-gradient(135deg,var(--accent),var(--accent3)); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+  .detail-name { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; margin-bottom:3px; line-height:1.3; }
+  .detail-dev { font-size:11px; color:var(--muted); margin-bottom:7px; }
+  .detail-rank-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:var(--accent); padding:3px 9px; border-radius:6px; font-size:10px; font-family:'DM Mono',monospace; }
+  .detail-body { padding:12px 20px; }
+  .detail-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(30,45,71,0.4); font-size:12px; }
+  .detail-row:last-child { border-bottom:none; }
+  .detail-row-key { color:var(--muted); font-family:'DM Mono',monospace; font-size:10px; }
+  .detail-row-val { font-weight:500; text-align:right; font-size:12px; }
+  .open-btn { display:block; width:calc(100% - 40px); margin:0 20px 16px; background:linear-gradient(135deg,var(--accent),var(--accent3)); color:white; border:none; padding:10px; border-radius:9px; font-size:13px; font-family:'Syne',sans-serif; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; transition:opacity 0.2s; }
+  .open-btn:hover { opacity:0.85; }
 
-  .app-row:last-child { border-bottom: none; }
-  .app-row:hover { background: var(--surface2); }
+  /* MARKET INSIGHTS */
+  .insights-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; opacity:0; animation:fadeUp 0.5s 0.25s forwards; }
+  .insights-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; }
+  .ins-tab { padding:9px 13px; font-size:10px; font-family:'DM Mono',monospace; color:var(--muted); cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.15s; background:none; border-top:none; border-left:none; border-right:none; }
+  .ins-tab:hover { color:var(--text); }
+  .ins-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .ins-panel { display:none; padding:14px 18px; }
+  .ins-panel.active { display:block; }
+  .ins-section-title { font-size:10px; font-family:'DM Mono',monospace; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
 
-  .rank-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-    text-align: center;
-  }
+  .opp-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .opp-label { font-size:11px; color:var(--text); min-width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .opp-bar-wrap { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+  .opp-bar { height:100%; border-radius:3px; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .opp-val { font-size:10px; font-family:'DM Mono',monospace; color:var(--muted); min-width:28px; text-align:right; }
 
-  .rank-num.top3 {
-    font-size: 15px;
-    font-weight: 600;
-    background: linear-gradient(135deg, var(--warning), #f97316);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+  .insight-item { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:11px 13px; margin-bottom:9px; border-left:3px solid var(--accent); }
+  .insight-item:last-child { margin-bottom:0; }
+  .insight-item.warn { border-left-color:var(--warning); }
+  .insight-item.ok { border-left-color:var(--success); }
+  .insight-item.info { border-left-color:var(--accent2); }
+  .insight-title { font-size:12px; font-weight:600; margin-bottom:4px; }
+  .insight-body { font-size:11px; color:var(--muted); line-height:1.6; }
+  .insight-val { font-family:'DM Mono',monospace; color:var(--text); font-weight:500; }
 
-  .app-icon {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    object-fit: cover;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-  }
+  .mono-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .mono-table th { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-align:left; padding:4px 7px; border-bottom:1px solid var(--border); font-weight:400; text-transform:uppercase; letter-spacing:0.5px; }
+  .mono-table td { padding:6px 7px; border-bottom:1px solid rgba(30,45,71,0.4); }
+  .mono-table tr:last-child td { border-bottom:none; }
+  .mono-table tr:hover td { background:rgba(59,130,246,0.04); }
 
-  .app-icon-placeholder {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--surface2), var(--border));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    border: 1px solid var(--border);
-  }
+  .pub-item { display:flex; align-items:center; gap:9px; padding:6px 0; border-bottom:1px solid rgba(30,45,71,0.4); font-size:11px; }
+  .pub-item:last-child { border-bottom:none; }
+  .pub-rank { font-family:'DM Mono',monospace; color:var(--muted); min-width:22px; }
+  .pub-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pub-count { font-family:'DM Mono',monospace; font-size:10px; background:rgba(59,130,246,0.12); color:var(--accent); padding:2px 7px; border-radius:4px; }
 
-  .app-info { min-width: 0; }
+  .rating-dist { display:flex; flex-direction:column; gap:6px; }
+  .rd-row { display:flex; align-items:center; gap:8px; font-size:11px; }
+  .rd-star { color:var(--warning); min-width:18px; font-family:'DM Mono',monospace; }
+  .rd-bar-wrap { flex:1; height:7px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .rd-bar { height:100%; border-radius:4px; background:var(--warning); transition:width 0.7s; }
+  .rd-count { font-family:'DM Mono',monospace; color:var(--muted); min-width:26px; text-align:right; }
 
-  .app-name {
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 3px;
-  }
+  /* CATEGORY */
+  .category-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; opacity:0; animation:fadeUp 0.5s 0.35s forwards; }
+  .mini-chart-wrap { padding:14px 20px 16px; }
+  .chart-title { font-size:10px; font-family:'DM Mono',monospace; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px; }
+  .mini-bars { display:flex; align-items:flex-end; gap:4px; height:48px; }
+  .mini-bar { flex:1; border-radius:3px 3px 0 0; opacity:0.75; transition:opacity 0.2s; min-height:4px; }
+  .mini-bar:hover { opacity:1; }
+  .cat-list { padding:6px 0; }
+  .cat-item { display:flex; align-items:center; gap:8px; padding:6px 20px; }
+  .cat-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .cat-name { font-size:11px; color:var(--text); flex:1; }
+  .cat-count { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .cat-bar-wrap { flex:1; height:4px; background:var(--border); border-radius:2px; }
+  .cat-bar { height:100%; border-radius:2px; transition:width 0.6s ease; }
 
-  .app-dev {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  /* STATES */
+  .loading { padding:60px 20px; text-align:center; display:none; }
+  .loading.active { display:block; }
+  .spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 12px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .loading-text { font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; }
+  .error-msg { padding:14px 20px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; color:#fca5a5; font-size:12px; margin:12px 20px; display:none; }
+  .error-msg.active { display:block; }
+  .empty-state { padding:60px 20px; text-align:center; color:var(--muted); display:none; }
+  .empty-state.active { display:block; }
+  .empty-state-icon { font-size:36px; margin-bottom:10px; }
+  .empty-state-text { font-size:12px; line-height:1.7; }
 
-  .app-meta { text-align: right; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
 
-  .stars {
-    font-size: 11px;
-    color: var(--warning);
-    margin-bottom: 3px;
-    white-space: nowrap;
-  }
-
-  .price-tag {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    padding: 2px 8px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-
-  .price-free { background: rgba(16,185,129,0.12); color: var(--success); }
-  .price-paid { background: rgba(59,130,246,0.12); color: var(--accent); }
-
-  /* SIDE PANELS */
-  .side-panels { display: flex; flex-direction: column; gap: 18px; }
-
-  /* DETAIL CARD */
-  .detail-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    opacity: 0;
-    animation: fadeUp 0.5s 0.2s forwards;
-  }
-
-  .detail-empty {
-    padding: 40px 24px;
-    text-align: center;
-    color: var(--muted);
-  }
-
-  .detail-empty-icon { font-size: 36px; margin-bottom: 10px; }
-  .detail-empty-text { font-size: 13px; line-height: 1.6; }
-
-  .detail-content { padding: 0; }
-
-  .detail-hero {
-    background: linear-gradient(135deg, var(--surface2), var(--bg));
-    padding: 22px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
-  .detail-icon {
-    width: 64px; height: 64px;
-    border-radius: 14px;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-  }
-
-  .detail-icon-placeholder {
-    width: 64px; height: 64px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    flex-shrink: 0;
-  }
-
-  .detail-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    line-height: 1.3;
-  }
-
-  .detail-dev { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-
-  .detail-rank-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(59,130,246,0.15);
-    border: 1px solid rgba(59,130,246,0.3);
-    color: var(--accent);
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    font-weight: 500;
-  }
-
-  .detail-body { padding: 18px 22px; }
-
-  .detail-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid rgba(30,45,71,0.5);
-    font-size: 13px;
-  }
-
-  .detail-row:last-child { border-bottom: none; }
-
-  .detail-row-key { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; }
-  .detail-row-val { font-weight: 500; text-align: right; }
-
-  .open-btn {
-    display: block;
-    width: calc(100% - 44px);
-    margin: 0 22px 18px;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: white;
-    border: none;
-    padding: 11px;
-    border-radius: 9px;
-    font-size: 13px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.2s;
-    letter-spacing: 0.2px;
-  }
-
-  .open-btn:hover { opacity: 0.85; }
-
-  /* CATEGORY BREAKDOWN */
-  .category-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    opacity: 0;
-    animation: fadeUp 0.5s 0.3s forwards;
-  }
-
-  .cat-list { padding: 10px 0; }
-
-  .cat-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 22px;
-  }
-
-  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  .cat-name { font-size: 12px; color: var(--text); flex: 1; }
-  .cat-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
-
-  .cat-bar-wrap { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
-  .cat-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-
-  /* LOADING */
-  .loading {
-    padding: 60px 22px;
-    text-align: center;
-    display: none;
-  }
-
-  .loading.active { display: block; }
-
-  .spinner {
-    width: 36px; height: 36px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin: 0 auto 14px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-text { font-size: 13px; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-  /* ERROR */
-  .error-msg {
-    padding: 20px 22px;
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.2);
-    border-radius: 10px;
-    color: #fca5a5;
-    font-size: 13px;
-    margin: 12px 22px;
-    display: none;
-  }
-
-  .error-msg.active { display: block; }
-
-  /* EMPTY */
-  .empty-state {
-    padding: 60px 22px;
-    text-align: center;
-    color: var(--muted);
-    display: none;
-  }
-  .empty-state.active { display: block; }
-  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state-text { font-size: 13px; line-height: 1.7; }
-
-  /* CHART */
-  .mini-chart-wrap { padding: 16px 22px 20px; }
-
-  .chart-title {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 12px;
-  }
-
-  .mini-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 60px;
-  }
-
-  .mini-bar {
-    flex: 1;
-    background: linear-gradient(180deg, var(--accent), var(--accent3));
-    border-radius: 3px 3px 0 0;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    min-height: 4px;
-  }
-
-  .mini-bar:hover { opacity: 1; }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* FOOTER */
-  footer {
-    margin-top: 48px;
-    padding: 22px 0;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .footer-note { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-  .data-source {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 5px 12px;
-    border-radius: 6px;
-  }
-
-  .data-source::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: block;
-  }
+  footer { margin-top:40px; padding:20px 0; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .footer-note { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+  .data-source { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; background:var(--surface); border:1px solid var(--border); padding:5px 12px; border-radius:6px; }
+  .data-source::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--accent); display:block; }
 </style>
 </head>
 <body>
-
 <div class="container">
 
-  <!-- HEADER -->
   <header>
     <div class="logo">
       <div class="logo-icon">📡</div>
       <div class="logo-text">App<span>Radar</span></div>
     </div>
-    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-      <div class="live-badge">
-        <div class="live-dot"></div>
-        LIVE DATA
-      </div>
-      <div style="font-size:12px; color:var(--muted); font-family:'DM Mono',monospace;" id="last-updated"></div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div class="live-badge"><div class="live-dot"></div>LIVE DATA</div>
+      <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;" id="last-updated"></div>
     </div>
   </header>
 
-  <!-- CONTROLS -->
   <div class="controls">
     <div class="control-group">
       <div class="control-label">Chart Type</div>
@@ -702,7 +215,6 @@
         <option value="newpaidapplications">💫 New Paid Apps</option>
       </select>
     </div>
-
     <div class="control-group">
       <div class="control-label">Country</div>
       <select id="country">
@@ -728,9 +240,8 @@
         <option value="se">🇸🇪 Sweden</option>
       </select>
     </div>
-
     <div class="control-group">
-      <div class="control-label">Results Limit</div>
+      <div class="control-label">Limit</div>
       <select id="limit">
         <option value="25">Top 25</option>
         <option value="50" selected>Top 50</option>
@@ -738,371 +249,391 @@
         <option value="200">Top 200</option>
       </select>
     </div>
-
-    <button class="fetch-btn" id="fetch-btn" onclick="fetchData()">
-      ⚡ Fetch Rankings
-    </button>
+    <button class="fetch-btn" id="fetch-btn" onclick="fetchData()">⚡ Fetch Rankings</button>
   </div>
 
-  <!-- STATS ROW -->
   <div class="stats-row" id="stats-row" style="display:none;">
-    <div class="stat-card" style="animation-delay:0s;">
-      <div class="stat-value" id="stat-total">—</div>
-      <div class="stat-label">APPS TRACKED</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.07s;">
-      <div class="stat-value" id="stat-free">—</div>
-      <div class="stat-label">FREE APPS</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.14s;">
-      <div class="stat-value" id="stat-paid">—</div>
-      <div class="stat-label">PAID APPS</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.21s;">
-      <div class="stat-value" id="stat-avg-rating">—</div>
-      <div class="stat-label">AVG RATING</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.28s;">
-      <div class="stat-value" id="stat-country">—</div>
-      <div class="stat-label">MARKET</div>
-    </div>
+    <div class="stat-card" style="animation-delay:0s"><div class="stat-value" id="stat-total">—</div><div class="stat-label">APPS TRACKED</div></div>
+    <div class="stat-card" style="animation-delay:0.05s"><div class="stat-value" id="stat-free">—</div><div class="stat-label">FREE APPS</div></div>
+    <div class="stat-card" style="animation-delay:0.10s"><div class="stat-value" id="stat-paid">—</div><div class="stat-label">PAID APPS</div></div>
+    <div class="stat-card" style="animation-delay:0.15s"><div class="stat-value" id="stat-avg-rating">—</div><div class="stat-label">AVG RATING</div></div>
+    <div class="stat-card" style="animation-delay:0.20s"><div class="stat-value" id="stat-top-genre">—</div><div class="stat-label">TOP GENRE</div></div>
+    <div class="stat-card" style="animation-delay:0.25s"><div class="stat-value" id="stat-indie-pct">—</div><div class="stat-label">INDIE SHARE</div></div>
   </div>
 
-  <!-- MAIN GRID -->
   <div class="main-grid">
 
-    <!-- TABLE PANEL -->
-    <div class="panel" id="main-panel">
+    <!-- TABLE -->
+    <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">
-          <div class="panel-title-icon" style="background:rgba(59,130,246,0.15);">📊</div>
-          Rankings
-        </div>
+        <div class="panel-title"><div class="panel-title-icon" style="background:rgba(59,130,246,0.15)">📊</div>Rankings</div>
         <span class="count-badge" id="count-badge">—</span>
       </div>
-
       <div class="search-wrap">
-        <input type="text" class="search-input" id="search-input" placeholder="Search apps or developers…" oninput="filterApps()" />
+        <input type="text" class="search-input" id="search-input" placeholder="Search apps, developers, genres…" oninput="filterApps()">
       </div>
-
-      <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div class="loading-text" id="loading-text">Connecting to Apple RSS API…</div>
-      </div>
-
+      <div class="loading" id="loading"><div class="spinner"></div><div class="loading-text" id="loading-text">Connecting to Apple RSS API…</div></div>
       <div class="error-msg" id="error-msg"></div>
-
-      <div class="empty-state" id="empty-state">
-        <div class="empty-state-icon">🔍</div>
-        <div class="empty-state-text">No apps found.<br>Try a different search term.</div>
-      </div>
-
-      <div class="app-table" id="app-table"></div>
+      <div class="empty-state" id="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">No apps match your search.</div></div>
+      <div id="app-table"></div>
     </div>
 
-    <!-- SIDE PANELS -->
+    <!-- SIDE -->
     <div class="side-panels">
 
-      <!-- APP DETAIL -->
-      <div class="detail-card" id="detail-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <div class="panel-title-icon" style="background:rgba(139,92,246,0.15);">🔎</div>
-            App Detail
-          </div>
-        </div>
-        <div class="detail-empty" id="detail-empty">
-          <div class="detail-empty-icon">👆</div>
-          <div class="detail-empty-text">Click any app to see<br>detailed intelligence</div>
-        </div>
-        <div class="detail-content" id="detail-content" style="display:none;"></div>
+      <!-- DETAIL -->
+      <div class="detail-card">
+        <div class="panel-header"><div class="panel-title"><div class="panel-title-icon" style="background:rgba(139,92,246,0.15)">🔎</div>App Detail</div></div>
+        <div class="detail-empty" id="detail-empty"><div class="detail-empty-icon">👆</div><div class="detail-empty-text">Click any row to inspect</div></div>
+        <div id="detail-content" style="display:none;"></div>
       </div>
 
-      <!-- CATEGORY BREAKDOWN -->
+      <!-- INSIGHTS -->
+      <div class="insights-card" id="insights-card" style="display:none;">
+        <div class="panel-header"><div class="panel-title"><div class="panel-title-icon" style="background:rgba(6,182,212,0.15)">🧠</div>Market Insights</div></div>
+        <div class="insights-tabs">
+          <button class="ins-tab active"  onclick="switchTab('opportunity')">Opportunity</button>
+          <button class="ins-tab"         onclick="switchTab('monetization')">Monetization</button>
+          <button class="ins-tab"         onclick="switchTab('publishers')">Publishers</button>
+          <button class="ins-tab"         onclick="switchTab('ratings')">Ratings</button>
+          <button class="ins-tab"         onclick="switchTab('signals')">Signals</button>
+        </div>
+
+        <div class="ins-panel active" id="tab-opportunity">
+          <div class="ins-section-title">Genre competition (by app count)</div>
+          <div id="opp-bars"></div>
+          <div class="insight-item ok" style="margin-top:12px"><div class="insight-title">💡 Low-competition genres</div><div class="insight-body" id="opp-low-text">—</div></div>
+          <div class="insight-item warn"><div class="insight-title">🔥 Saturated — avoid without moat</div><div class="insight-body" id="opp-high-text">—</div></div>
+        </div>
+
+        <div class="ins-panel" id="tab-monetization">
+          <div class="ins-section-title">Paid vs free split by genre</div>
+          <table class="mono-table"><thead><tr><th>Genre</th><th>Free</th><th>Paid</th><th>% Paid</th></tr></thead><tbody id="mono-tbody"></tbody></table>
+          <div class="insight-item info" style="margin-top:12px"><div class="insight-title">💰 Best genre to charge for</div><div class="insight-body" id="best-mono-text">—</div></div>
+        </div>
+
+        <div class="ins-panel" id="tab-publishers">
+          <div class="ins-section-title">Top publishers by chart presence</div>
+          <div id="pub-list"></div>
+          <div class="insight-item" style="margin-top:12px"><div class="insight-title">🏢 Market concentration</div><div class="insight-body" id="pub-insight-text">—</div></div>
+        </div>
+
+        <div class="ins-panel" id="tab-ratings">
+          <div class="ins-section-title">Rating distribution</div>
+          <div class="rating-dist" id="rating-dist"></div>
+          <div class="insight-item ok" style="margin-top:12px"><div class="insight-title">⭐ Quality bar to clear</div><div class="insight-body" id="rating-insight-text">—</div></div>
+          <div class="insight-item info" style="margin-top:8px"><div class="insight-title">📊 Happiest-user genre</div><div class="insight-body" id="best-genre-rating-text">—</div></div>
+        </div>
+
+        <div class="ins-panel" id="tab-signals">
+          <div class="insight-item ok"><div class="insight-title">🟢 Indie opportunity</div><div class="insight-body" id="sig-indie">—</div></div>
+          <div class="insight-item info"><div class="insight-title">🆕 New-app momentum</div><div class="insight-body" id="sig-new">—</div></div>
+          <div class="insight-item warn"><div class="insight-title">⚠️ Crowding risk</div><div class="insight-body" id="sig-crowd">—</div></div>
+          <div class="insight-item"><div class="insight-title">📅 Update cadence</div><div class="insight-body" id="sig-update">—</div></div>
+          <div class="insight-item ok"><div class="insight-title">💡 Free-to-play openings</div><div class="insight-body" id="sig-f2p">—</div></div>
+        </div>
+      </div>
+
+      <!-- CATEGORY -->
       <div class="category-card" id="category-card" style="display:none;">
-        <div class="panel-header">
-          <div class="panel-title">
-            <div class="panel-title-icon" style="background:rgba(6,182,212,0.15);">🏷️</div>
-            Genre Breakdown
-          </div>
-        </div>
-        <div class="mini-chart-wrap">
-          <div class="chart-title">APPS PER GENRE (TOP 10)</div>
-          <div class="mini-bars" id="mini-bars"></div>
-        </div>
+        <div class="panel-header"><div class="panel-title"><div class="panel-title-icon" style="background:rgba(6,182,212,0.15)">🏷️</div>Genre Breakdown</div></div>
+        <div class="mini-chart-wrap"><div class="chart-title">APPS PER GENRE</div><div class="mini-bars" id="mini-bars"></div></div>
         <div class="cat-list" id="cat-list"></div>
       </div>
 
     </div>
   </div>
 
-  <!-- FOOTER -->
   <footer>
-    <div class="footer-note">AppRadar — iOS Market Intelligence Dashboard</div>
-    <div class="data-source">Apple RSS API · itunes.apple.com/feed/json</div>
+    <div class="footer-note">AppRadar — iOS Market Intelligence for Indie Developers</div>
+    <div class="data-source">Apple RSS API · allorigins.win proxy</div>
   </footer>
-
 </div>
 
 <script>
-  let allApps = [];
-  const COUNTRY_NAMES = {
-    us:'United States',gb:'United Kingdom',fr:'France',de:'Germany',jp:'Japan',kr:'South Korea',
-    cn:'China',in:'India',br:'Brazil',ca:'Canada',au:'Australia',mx:'Mexico',ru:'Russia',
-    tr:'Turkey',it:'Italy',es:'Spain',sa:'Saudi Arabia',ae:'UAE',sg:'Singapore',se:'Sweden'
-  };
+let allApps = [];
+const COUNTRY_NAMES = { us:'United States',gb:'United Kingdom',fr:'France',de:'Germany',jp:'Japan',kr:'South Korea',cn:'China',in:'India',br:'Brazil',ca:'Canada',au:'Australia',mx:'Mexico',ru:'Russia',tr:'Turkey',it:'Italy',es:'Spain',sa:'Saudi Arabia',ae:'UAE',sg:'Singapore',se:'Sweden' };
+const GENRE_COLORS = ['#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899','#6366f1','#84cc16','#f97316'];
 
-  const GENRE_COLORS = [
-    '#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b',
-    '#ef4444','#ec4899','#6366f1','#84cc16','#f97316'
-  ];
-
-  async function fetchData() {
-    const chartType = document.getElementById('chart-type').value;
-    const country = document.getElementById('country').value;
-    const limit = document.getElementById('limit').value;
-    const btn = document.getElementById('fetch-btn');
-
-    btn.disabled = true;
-    btn.textContent = '⏳ Fetching…';
-
-    showLoading(true);
-    hideError();
-    clearTable();
-    hideStats();
-    document.getElementById('category-card').style.display = 'none';
-
-    const loadingTexts = [
-      'Connecting to Apple RSS API…',
-      'Parsing chart data…',
-      'Extracting app metadata…',
-      'Building intelligence report…'
-    ];
-    let li = 0;
-    const lt = setInterval(() => {
-      document.getElementById('loading-text').textContent = loadingTexts[++li % loadingTexts.length];
-    }, 700);
-
-    try {
-      const appleUrl = `https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(appleUrl)}`;
-      //const url = `https://corsproxy.io/?https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const entries = data?.feed?.entry;
-      if (!entries || entries.length === 0) throw new Error('No data returned from Apple API.');
-      allApps = parseApps(entries);
-      renderAll(allApps, country);
-    } catch (e) {
-      showError(`Failed to fetch: ${e.message}. This may be a CORS issue — try running on a local server or using a CORS proxy.`);
-    } finally {
-      clearInterval(lt);
-      showLoading(false);
-      btn.disabled = false;
-      btn.textContent = '⚡ Fetch Rankings';
-    }
+async function fetchData() {
+  const chartType = document.getElementById('chart-type').value;
+  const country   = document.getElementById('country').value;
+  const limit     = document.getElementById('limit').value;
+  const btn       = document.getElementById('fetch-btn');
+  btn.disabled = true; btn.textContent = '⏳ Fetching…';
+  showLoading(true); hideError(); clearTable(); hideStats();
+  document.getElementById('category-card').style.display = 'none';
+  document.getElementById('insights-card').style.display = 'none';
+  const msgs = ['Connecting to Apple RSS API…','Parsing chart data…','Extracting metadata…','Computing market insights…'];
+  let li = 0;
+  const lt = setInterval(() => { document.getElementById('loading-text').textContent = msgs[++li%msgs.length]; }, 700);
+  try {
+    const apple = `https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
+    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const entries = data?.feed?.entry;
+    if (!entries || entries.length === 0) throw new Error('No data returned from Apple API.');
+    allApps = parseApps(entries);
+    renderAll(allApps, country);
+  } catch(e) {
+    showError(`Failed to fetch: ${e.message}. Check connection or try again.`);
+  } finally {
+    clearInterval(lt); showLoading(false);
+    btn.disabled = false; btn.textContent = '⚡ Fetch Rankings';
   }
+}
 
-  function parseApps(entries) {
-    return entries.map((e, i) => {
-      const name = e?.['im:name']?.label || 'Unknown';
-      const dev = e?.['im:artist']?.label || '—';
-      const img = e?.['im:image']?.[2]?.label || e?.['im:image']?.[0]?.label || '';
-      const price = e?.['im:price']?.label || 'Free';
-      const genre = e?.category?.attributes?.term || '—';
-      const id = e?.id?.attributes?.['im:id'] || '';
-      const link = e?.link?.attributes?.href || `https://apps.apple.com/app/id${id}`;
-      const rating = e?.['im:rating']?.label;
-      const ratingCount = e?.['im:ratingCount']?.label;
-      const releaseDate = e?.['im:releaseDate']?.label?.split('T')[0] || '—';
-      const bundleId = e?.id?.label || '';
-      return { rank: i+1, name, dev, img, price, genre, id, link, rating, ratingCount, releaseDate, bundleId };
-    });
-  }
-
-  function renderAll(apps, country) {
-    renderStats(apps, country);
-    renderTable(apps);
-    renderCategories(apps);
-    showStats();
-    document.getElementById('category-card').style.display = 'block';
-    document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
-  }
-
-  function renderStats(apps, country) {
-    const free = apps.filter(a => a.price === 'Free' || a.price === '0.00').length;
-    const paid = apps.length - free;
-    const rated = apps.filter(a => a.rating && !isNaN(parseFloat(a.rating)));
-    const avg = rated.length ? (rated.reduce((s,a) => s+parseFloat(a.rating),0)/rated.length).toFixed(1) : '—';
-    document.getElementById('stat-total').textContent = apps.length;
-    document.getElementById('stat-free').textContent = free;
-    document.getElementById('stat-paid').textContent = paid;
-    document.getElementById('stat-avg-rating').textContent = avg !== '—' ? avg + ' ★' : '—';
-    document.getElementById('stat-country').textContent = (COUNTRY_NAMES[country] || country).toUpperCase().slice(0,3);
-    document.getElementById('count-badge').textContent = apps.length + ' apps';
-  }
-
-  function renderTable(apps) {
-    const table = document.getElementById('app-table');
-    table.innerHTML = '';
-
-    if (apps.length === 0) {
-      document.getElementById('empty-state').classList.add('active');
-      document.getElementById('count-badge').textContent = '0 apps';
-      return;
-    }
-
-    document.getElementById('empty-state').classList.remove('active');
-    document.getElementById('count-badge').textContent = apps.length + ' apps';
-
-    apps.forEach((app, i) => {
-      const row = document.createElement('div');
-      row.className = 'app-row';
-      row.style.animationDelay = Math.min(i * 0.025, 0.6) + 's';
-
-      const stars = app.rating ? '★'.repeat(Math.round(parseFloat(app.rating))) + '☆'.repeat(5-Math.round(parseFloat(app.rating))) : '';
-      const isFree = app.price === 'Free' || app.price === '0.00';
-
-      row.innerHTML = `
-        <div class="rank-num ${app.rank <= 3 ? 'top3' : ''}">${app.rank <= 3 ? ['🥇','🥈','🥉'][app.rank-1] : '#'+app.rank}</div>
-        ${app.img
-          ? `<img class="app-icon" src="${app.img}" alt="${app.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-             <div class="app-icon-placeholder" style="display:none;">📱</div>`
-          : `<div class="app-icon-placeholder">📱</div>`
-        }
-        <div class="app-info">
-          <div class="app-name">${escHtml(app.name)}</div>
-          <div class="app-dev">${escHtml(app.dev)}</div>
-        </div>
-        <div class="app-meta">
-          ${stars ? `<div class="stars">${stars}</div>` : ''}
-          <span class="price-tag ${isFree ? 'price-free' : 'price-paid'}">${isFree ? 'FREE' : app.price}</span>
-        </div>
-      `;
-
-      row.addEventListener('click', () => showDetail(app));
-      table.appendChild(row);
-    });
-  }
-
-  function showDetail(app) {
-    document.getElementById('detail-empty').style.display = 'none';
-    document.getElementById('detail-content').style.display = 'block';
-
-    const isFree = app.price === 'Free' || app.price === '0.00';
-    const stars = app.rating ? parseFloat(app.rating).toFixed(1) + ' ★' : 'N/A';
-    const reviews = app.ratingCount ? parseInt(app.ratingCount).toLocaleString() + ' reviews' : 'N/A';
-
-    document.getElementById('detail-content').innerHTML = `
-      <div class="detail-hero">
-        ${app.img
-          ? `<img class="detail-icon" src="${app.img}" alt="${app.name}" onerror="this.outerHTML='<div class=detail-icon-placeholder>📱</div>'">`
-          : `<div class="detail-icon-placeholder">📱</div>`
-        }
-        <div style="min-width:0;">
-          <div class="detail-name">${escHtml(app.name)}</div>
-          <div class="detail-dev">${escHtml(app.dev)}</div>
-          <div class="detail-rank-badge">⚡ Rank #${app.rank}</div>
-        </div>
-      </div>
-      <div class="detail-body">
-        <div class="detail-row">
-          <span class="detail-row-key">PRICE</span>
-          <span class="detail-row-val" style="color:${isFree ? 'var(--success)' : 'var(--accent)'}">${isFree ? 'Free' : app.price}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row-key">RATING</span>
-          <span class="detail-row-val" style="color:var(--warning)">${stars}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row-key">REVIEWS</span>
-          <span class="detail-row-val">${reviews}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row-key">GENRE</span>
-          <span class="detail-row-val">${escHtml(app.genre)}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row-key">RELEASED</span>
-          <span class="detail-row-val">${app.releaseDate}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-row-key">APP ID</span>
-          <span class="detail-row-val" style="font-family:'DM Mono',monospace; font-size:11px;">${app.id || '—'}</span>
-        </div>
-      </div>
-      <a class="open-btn" href="${app.link}" target="_blank" rel="noopener">Open in App Store ↗</a>
-    `;
-
-    // Highlight selected row
-    document.querySelectorAll('.app-row').forEach(r => r.style.background = '');
-  }
-
-  function renderCategories(apps) {
-    const genreCount = {};
-    apps.forEach(a => { genreCount[a.genre] = (genreCount[a.genre]||0)+1; });
-    const sorted = Object.entries(genreCount).sort((a,b) => b[1]-a[1]).slice(0,10);
-    const max = sorted[0]?.[1] || 1;
-
-    // Mini bar chart
-    const barsEl = document.getElementById('mini-bars');
-    barsEl.innerHTML = sorted.map((g,i) => `
-      <div class="mini-bar" style="height:${Math.round((g[1]/max)*100)}%; background:${GENRE_COLORS[i]};" title="${g[0]}: ${g[1]}"></div>
-    `).join('');
-
-    // List
-    const list = document.getElementById('cat-list');
-    list.innerHTML = sorted.map((g,i) => `
-      <div class="cat-item">
-        <div class="cat-dot" style="background:${GENRE_COLORS[i]}"></div>
-        <div class="cat-name">${g[0]}</div>
-        <div class="cat-bar-wrap"><div class="cat-bar" style="width:${Math.round((g[1]/max)*100)}%;background:${GENRE_COLORS[i]};"></div></div>
-        <div class="cat-count">${g[1]}</div>
-      </div>
-    `).join('');
-  }
-
-  function filterApps() {
-    const q = document.getElementById('search-input').value.toLowerCase().trim();
-    if (!allApps.length) return;
-    const filtered = q ? allApps.filter(a => a.name.toLowerCase().includes(q) || a.dev.toLowerCase().includes(q) || a.genre.toLowerCase().includes(q)) : allApps;
-    renderTable(filtered);
-    document.getElementById('count-badge').textContent = filtered.length + ' apps';
-    if (filtered.length === 0) document.getElementById('empty-state').classList.add('active');
-  }
-
-  function showLoading(v) {
-    document.getElementById('loading').classList.toggle('active', v);
-  }
-
-  function hideError() { document.getElementById('error-msg').classList.remove('active'); }
-
-  function showError(msg) {
-    const el = document.getElementById('error-msg');
-    el.textContent = '⚠️ ' + msg;
-    el.classList.add('active');
-  }
-
-  function clearTable() {
-    document.getElementById('app-table').innerHTML = '';
-    document.getElementById('detail-empty').style.display = 'block';
-    document.getElementById('detail-content').style.display = 'none';
-    document.getElementById('empty-state').classList.remove('active');
-    allApps = [];
-  }
-
-  function showStats() { document.getElementById('stats-row').style.display = 'grid'; }
-  function hideStats() { document.getElementById('stats-row').style.display = 'none'; }
-
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // Auto-fetch on load
-  window.addEventListener('load', () => {
-    setTimeout(fetchData, 300);
+function parseApps(entries) {
+  return entries.map((e,i) => {
+    const price = e?.['im:price']?.label || 'Free';
+    const isFree = price === 'Free' || price === '0.00' || parseFloat(price) === 0;
+    return {
+      rank: i+1,
+      name:        e?.['im:name']?.label || 'Unknown',
+      dev:         e?.['im:artist']?.label || '—',
+      img:         e?.['im:image']?.[2]?.label || e?.['im:image']?.[0]?.label || '',
+      price, isFree,
+      genre:       e?.category?.attributes?.term || '—',
+      id:          e?.id?.attributes?.['im:id'] || '',
+      link:        e?.link?.attributes?.href || '',
+      rating:      e?.['im:rating']?.label,
+      ratingCount: e?.['im:ratingCount']?.label,
+      releaseDate: e?.['im:releaseDate']?.label?.split('T')[0] || '—',
+    };
   });
+}
+
+function renderAll(apps, country) {
+  renderStats(apps, country);
+  renderTable(apps);
+  renderCategories(apps);
+  renderInsights(apps);
+  showStats();
+  document.getElementById('category-card').style.display = 'block';
+  document.getElementById('insights-card').style.display = 'block';
+  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  switchTab('opportunity');
+}
+
+function renderStats(apps) {
+  const free = apps.filter(a => a.isFree).length;
+  const rated = apps.filter(a => a.rating && !isNaN(parseFloat(a.rating)));
+  const avg = rated.length ? (rated.reduce((s,a) => s+parseFloat(a.rating),0)/rated.length).toFixed(1) : '—';
+  const gc = {}; apps.forEach(a => { gc[a.genre]=(gc[a.genre]||0)+1; });
+  const topGenre = Object.entries(gc).sort((a,b)=>b[1]-a[1])[0];
+  const pc = {}; apps.forEach(a => { pc[a.dev]=(pc[a.dev]||0)+1; });
+  const indiePubs = Object.values(pc).filter(v=>v===1).length;
+  const indiePct  = Math.round((indiePubs/Object.keys(pc).length)*100);
+  document.getElementById('stat-total').textContent = apps.length;
+  document.getElementById('stat-free').textContent  = free;
+  document.getElementById('stat-paid').textContent  = apps.length - free;
+  document.getElementById('stat-avg-rating').textContent = avg !== '—' ? avg+'★' : '—';
+  document.getElementById('stat-top-genre').textContent  = topGenre ? topGenre[0].split(' ')[0] : '—';
+  document.getElementById('stat-indie-pct').textContent  = indiePct+'%';
+  document.getElementById('count-badge').textContent = apps.length+' apps';
+}
+
+function renderTable(apps) {
+  const table = document.getElementById('app-table');
+  table.innerHTML = '';
+  if (!apps.length) { document.getElementById('empty-state').classList.add('active'); document.getElementById('count-badge').textContent='0 apps'; return; }
+  document.getElementById('empty-state').classList.remove('active');
+  document.getElementById('count-badge').textContent = apps.length+' apps';
+  apps.forEach((app,i) => {
+    const row = document.createElement('div');
+    row.className = 'app-row';
+    row.style.animationDelay = Math.min(i*0.022,0.55)+'s';
+    const stars = app.rating ? '★'.repeat(Math.round(parseFloat(app.rating)))+'☆'.repeat(5-Math.round(parseFloat(app.rating))) : '';
+    const storeUrl = app.link || `https://apps.apple.com/app/id${app.id}`;
+    row.innerHTML = `
+      <div class="rank-num ${app.rank<=3?'top3':''}">${app.rank<=3?['🥇','🥈','🥉'][app.rank-1]:'#'+app.rank}</div>
+      ${app.img ? `<img class="app-icon" src="${app.img}" alt="" loading="lazy" onerror="this.outerHTML='<div class=app-icon-placeholder>📱</div>'">` : '<div class="app-icon-placeholder">📱</div>'}
+      <div class="app-info">
+        <div class="app-name">${escHtml(app.name)}</div>
+        <div class="app-dev">${escHtml(app.dev)}</div>
+      </div>
+      <div class="app-meta">
+        ${stars ? `<div class="stars">${stars}</div>` : ''}
+        <span class="price-tag ${app.isFree?'price-free':'price-paid'}">${app.isFree?'FREE':app.price}</span>
+      </div>
+      <a class="row-store-btn" href="${escHtml(storeUrl)}" target="_blank" rel="noopener" title="Open in App Store" onclick="event.stopPropagation()">↗</a>`;
+    row.addEventListener('click', () => {
+      document.querySelectorAll('.app-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+      showDetail(app);
+    });
+    table.appendChild(row);
+  });
+}
+
+function showDetail(app) {
+  document.getElementById('detail-empty').style.display = 'none';
+  document.getElementById('detail-content').style.display = 'block';
+  const stars = app.rating ? parseFloat(app.rating).toFixed(1)+' ★' : 'N/A';
+  const reviews = app.ratingCount ? parseInt(app.ratingCount).toLocaleString()+' reviews' : 'N/A';
+  const daysSince = app.releaseDate !== '—' ? Math.floor((Date.now()-new Date(app.releaseDate))/86400000)+' days ago' : '—';
+  const storeUrl = app.link || `https://apps.apple.com/app/id${app.id}`;
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-hero">
+      ${app.img ? `<img class="detail-icon" src="${app.img}" alt="" onerror="this.outerHTML='<div class=detail-icon-placeholder>📱</div>'">` : '<div class="detail-icon-placeholder">📱</div>'}
+      <div style="min-width:0">
+        <div class="detail-name">${escHtml(app.name)}</div>
+        <div class="detail-dev">${escHtml(app.dev)}</div>
+        <div class="detail-rank-badge">⚡ Rank #${app.rank}</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-row"><span class="detail-row-key">PRICE</span><span class="detail-row-val" style="color:${app.isFree?'var(--success)':'var(--accent)'}">${app.isFree?'Free':app.price}</span></div>
+      <div class="detail-row"><span class="detail-row-key">RATING</span><span class="detail-row-val" style="color:var(--warning)">${stars}</span></div>
+      <div class="detail-row"><span class="detail-row-key">REVIEWS</span><span class="detail-row-val">${reviews}</span></div>
+      <div class="detail-row"><span class="detail-row-key">GENRE</span><span class="detail-row-val">${escHtml(app.genre)}</span></div>
+      <div class="detail-row"><span class="detail-row-key">RELEASED</span><span class="detail-row-val">${app.releaseDate} <span style="color:var(--muted);font-size:10px">(${daysSince})</span></span></div>
+      <div class="detail-row"><span class="detail-row-key">APP ID</span><span class="detail-row-val" style="font-family:'DM Mono',monospace;font-size:10px">${app.id||'—'}</span></div>
+    </div>
+    <a class="open-btn" href="${escHtml(storeUrl)}" target="_blank" rel="noopener">Open in App Store ↗</a>`;
+}
+
+function renderCategories(apps) {
+  const gc = {}; apps.forEach(a => { gc[a.genre]=(gc[a.genre]||0)+1; });
+  const sorted = Object.entries(gc).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const max = sorted[0]?.[1]||1;
+  document.getElementById('mini-bars').innerHTML = sorted.map((g,i) =>
+    `<div class="mini-bar" style="height:${Math.round((g[1]/max)*100)}%;background:${GENRE_COLORS[i]};" title="${g[0]}: ${g[1]}"></div>`).join('');
+  document.getElementById('cat-list').innerHTML = sorted.map((g,i) => `
+    <div class="cat-item">
+      <div class="cat-dot" style="background:${GENRE_COLORS[i]}"></div>
+      <div class="cat-name">${g[0]}</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:${Math.round((g[1]/max)*100)}%;background:${GENRE_COLORS[i]};"></div></div>
+      <div class="cat-count">${g[1]}</div>
+    </div>`).join('');
+}
+
+function renderInsights(apps) {
+  const gc={}, pc={}, genreRatings={}, genrePaid={};
+  apps.forEach(a => {
+    gc[a.genre]=(gc[a.genre]||0)+1;
+    pc[a.dev]=(pc[a.dev]||0)+1;
+    if(!genreRatings[a.genre]) genreRatings[a.genre]=[];
+    if(a.rating&&!isNaN(parseFloat(a.rating))) genreRatings[a.genre].push(parseFloat(a.rating));
+    if(!genrePaid[a.genre]) genrePaid[a.genre]={free:0,paid:0};
+    a.isFree ? genrePaid[a.genre].free++ : genrePaid[a.genre].paid++;
+  });
+  const sortedGenres = Object.entries(gc).sort((a,b)=>b[1]-a[1]);
+  const maxCount = sortedGenres[0]?.[1]||1;
+  const total = apps.length;
+  const now = Date.now();
+
+  // Opportunity
+  document.getElementById('opp-bars').innerHTML = sortedGenres.slice(0,8).map(g => {
+    const score = Math.round((g[1]/maxCount)*100);
+    const col = score<30?'var(--success)':score<60?'var(--warning)':'var(--danger)';
+    return `<div class="opp-item">
+      <div class="opp-label">${g[0].length>14?g[0].slice(0,13)+'…':g[0]}</div>
+      <div class="opp-bar-wrap"><div class="opp-bar" style="width:${score}%;background:${col};"></div></div>
+      <div class="opp-val">${g[1]}</div></div>`;
+  }).join('');
+  const lowGenres  = sortedGenres.filter(g=>g[1]<=2).map(g=>g[0]).slice(0,3);
+  const highGenres = sortedGenres.slice(0,3).map(g=>g[0]);
+  document.getElementById('opp-low-text').innerHTML = lowGenres.length
+    ? lowGenres.map(g=>`<span class="insight-val">${g}</span>`).join(', ')+' — few competitors, easier to rank.'
+    : 'No clearly underserved genre in this chart.';
+  document.getElementById('opp-high-text').innerHTML = `<span class="insight-val">${highGenres.join(', ')}</span> — dominate this chart. Need strong differentiation to break in.`;
+
+  // Monetization
+  const monoRows = Object.entries(genrePaid)
+    .sort((a,b)=>(b[1].paid/(b[1].free+b[1].paid||1))-(a[1].paid/(a[1].free+a[1].paid||1)))
+    .slice(0,8).map(([genre,d]) => {
+      const pct = d.free+d.paid>0?Math.round((d.paid/(d.free+d.paid))*100):0;
+      const col = pct>=50?'var(--accent)':pct>=20?'var(--warning)':'var(--muted)';
+      return `<tr><td>${genre.length>14?genre.slice(0,13)+'…':genre}</td><td style="color:var(--success)">${d.free}</td><td style="color:var(--accent)">${d.paid}</td><td style="color:${col};font-family:'DM Mono',monospace">${pct}%</td></tr>`;
+    }).join('');
+  document.getElementById('mono-tbody').innerHTML = monoRows;
+  const bestMono = Object.entries(genrePaid).map(([g,d])=>({g,pct:d.free+d.paid>0?d.paid/(d.free+d.paid):0,count:d.free+d.paid})).filter(x=>x.count>=3).sort((a,b)=>b.pct-a.pct)[0];
+  document.getElementById('best-mono-text').innerHTML = bestMono
+    ? `<span class="insight-val">${bestMono.g}</span> — ${Math.round(bestMono.pct*100)}% of apps are paid. Users there are comfortable paying.`
+    : 'Not enough data yet.';
+
+  // Publishers
+  const topPubs = Object.entries(pc).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const totalPubs = Object.keys(pc).length;
+  const indiePubs = Object.values(pc).filter(v=>v===1).length;
+  document.getElementById('pub-list').innerHTML = topPubs.map((p,i)=>`
+    <div class="pub-item">
+      <div class="pub-rank">${i+1}</div>
+      <div class="pub-name">${escHtml(p[0])}</div>
+      <div class="pub-count">${p[1]} app${p[1]>1?'s':''}</div>
+    </div>`).join('');
+  const top3Share = topPubs.slice(0,3).reduce((s,p)=>s+p[1],0);
+  const conc = Math.round((top3Share/total)*100);
+  document.getElementById('pub-insight-text').innerHTML =
+    `Top 3 publishers own <span class="insight-val">${conc}%</span> of spots. <span class="insight-val">${indiePubs}</span>/${totalPubs} publishers have just 1 app — `
+    +(indiePubs/totalPubs>0.5?'market is <span class="insight-val" style="color:var(--success)">accessible to indies</span>.':'<span class="insight-val" style="color:var(--warning)">dominated by studios</span>. Target a niche.');
+
+  // Ratings
+  const buckets={5:0,4:0,3:0,2:0,1:0}; let ratedCount=0;
+  apps.forEach(a => { if(a.rating&&!isNaN(parseFloat(a.rating))){ const r=Math.round(parseFloat(a.rating)); if(buckets[r]!==undefined){buckets[r]++;ratedCount++;} }});
+  const maxB = Math.max(...Object.values(buckets),1);
+  document.getElementById('rating-dist').innerHTML = [5,4,3,2,1].map(s=>`
+    <div class="rd-row">
+      <div class="rd-star">${s}★</div>
+      <div class="rd-bar-wrap"><div class="rd-bar" style="width:${Math.round((buckets[s]/maxB)*100)}%"></div></div>
+      <div class="rd-count">${buckets[s]}</div>
+    </div>`).join('');
+  const highRated = apps.filter(a=>parseFloat(a.rating)>=4.5).length;
+  document.getElementById('rating-insight-text').innerHTML =
+    `<span class="insight-val">${highRated}</span> of ${ratedCount} rated apps score 4.5★+. Aim for <span class="insight-val">≥4.4★</span> to look credible in this chart.`;
+  const genreAvg = Object.entries(genreRatings).map(([g,rs])=>({g,avg:rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0,count:rs.length})).filter(x=>x.count>=3).sort((a,b)=>b.avg-a.avg)[0];
+  document.getElementById('best-genre-rating-text').innerHTML = genreAvg
+    ? `<span class="insight-val">${genreAvg.g}</span> has the happiest users (<span class="insight-val">${genreAvg.avg.toFixed(1)}★</span> avg).`
+    : 'Not enough data yet.';
+
+  // Signals
+  const freePct = Math.round((apps.filter(a=>a.isFree).length/total)*100);
+  const indiePct = Math.round((indiePubs/totalPubs)*100);
+  const newApps = apps.filter(a=>{ const d=new Date(a.releaseDate); return !isNaN(d)&&(now-d)<90*86400000; });
+  const newGc={}; newApps.forEach(a=>{newGc[a.genre]=(newGc[a.genre]||0)+1;});
+  const hotNew = Object.entries(newGc).sort((a,b)=>b[1]-a[1])[0];
+  const recentUpdated = apps.filter(a=>{ const d=new Date(a.releaseDate); return !isNaN(d)&&(now-d)<30*86400000; }).length;
+  const freeOnlyGenres = Object.entries(genrePaid).filter(([,d])=>d.free>0&&d.paid===0).map(([g])=>g);
+  document.getElementById('sig-indie').innerHTML = `<span class="insight-val">${indiePct}%</span> of publishers have 1 app in this chart. `+(indiePct>55?'Healthy indie presence — solo devs can break in.':'Studio-dominated — target a niche or secondary market.');
+  document.getElementById('sig-new').innerHTML = newApps.length
+    ? `<span class="insight-val">${newApps.length}</span> apps launched in the last 90 days are already ranking.`+(hotNew?` Hot entry genre: <span class="insight-val">${hotNew[0]}</span>.`:'')
+    : 'No very recent apps in top rankings — market favours established apps right now.';
+  const domPct = Math.round((sortedGenres[0]?.[1]||0)/total*100);
+  document.getElementById('sig-crowd').innerHTML = `<span class="insight-val">${sortedGenres[0]?.[0]||'—'}</span> holds <span class="insight-val">${domPct}%</span> of chart. `+(domPct>30?'Very crowded — differentiate or pick a smaller genre.':'Well-spread chart — no single genre is overrepresented.');
+  document.getElementById('sig-update').innerHTML = `<span class="insight-val">${recentUpdated}</span> chart apps updated in last 30 days. `+(recentUpdated>total*0.4?'High update pressure — budget for post-launch support.':'Low update frequency — a solid v1 can hold ranking.');
+  document.getElementById('sig-f2p').innerHTML = freeOnlyGenres.length
+    ? `Genres with <span class="insight-val">zero paid apps</span>: <span class="insight-val">${freeOnlyGenres.slice(0,3).join(', ')}</span>. Paid model untested — first-mover advantage possible.`
+    : 'All genres have paid competition. Freemium + IAP is the dominant model here.';
+}
+
+function switchTab(name) {
+  const tabs=['opportunity','monetization','publishers','ratings','signals'];
+  document.querySelectorAll('.ins-tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===name));
+  document.querySelectorAll('.ins-panel').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('tab-'+name);
+  if(el) el.classList.add('active');
+}
+
+function filterApps() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  if(!allApps.length) return;
+  const filtered = q ? allApps.filter(a=>a.name.toLowerCase().includes(q)||a.dev.toLowerCase().includes(q)||a.genre.toLowerCase().includes(q)) : allApps;
+  renderTable(filtered);
+  document.getElementById('count-badge').textContent = filtered.length+' apps';
+  document.getElementById('empty-state').classList.toggle('active', filtered.length===0);
+}
+
+function showLoading(v){document.getElementById('loading').classList.toggle('active',v);}
+function hideError(){document.getElementById('error-msg').classList.remove('active');}
+function showError(msg){const el=document.getElementById('error-msg');el.textContent='⚠️ '+msg;el.classList.add('active');}
+function clearTable(){document.getElementById('app-table').innerHTML='';document.getElementById('detail-empty').style.display='block';document.getElementById('detail-content').style.display='none';document.getElementById('empty-state').classList.remove('active');allApps=[];}
+function showStats(){document.getElementById('stats-row').style.display='grid';}
+function hideStats(){document.getElementById('stats-row').style.display='none';}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+window.addEventListener('load', ()=>setTimeout(fetchData,300));
 </script>
 </body>
 </html>
