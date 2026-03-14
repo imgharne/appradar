@@ -494,7 +494,30 @@
           <option value="au">🇦🇺 AU</option>
           <option value="kr">🇰🇷 KR</option>
         </select>
-        <button class="kw-probe-btn" id="kw-btn" onclick="probeKeyword()">🔍 Probe Keyword</button>
+      </div>
+
+      <!-- DATE FILTER — part of the search form, applied BEFORE fetching -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <span class="kw-filter-label">Published</span>
+        <div class="kw-filter-pills">
+          <span class="kw-fpill active" data-filter="all"  onclick="selectDateFilter(this)">Any time</span>
+          <span class="kw-fpill"        data-filter="30d"  onclick="selectDateFilter(this)">Last 30 days</span>
+          <span class="kw-fpill"        data-filter="6mo"  onclick="selectDateFilter(this)">Last 6 months</span>
+          <span class="kw-fpill"        data-filter="1y"   onclick="selectDateFilter(this)">Last year</span>
+          <span class="kw-fpill"        data-filter="1_3y" onclick="selectDateFilter(this)">1–3 years</span>
+          <span class="kw-fpill"        data-filter="3y"   onclick="selectDateFilter(this)">3+ years old</span>
+        </div>
+        <div class="kw-sort-wrap" style="margin-left:auto;">
+          <span class="kw-sort-label">Sort</span>
+          <select class="kw-sort-sel" id="kw-sort">
+            <option value="rank">By rank</option>
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="rating">Best rated</option>
+            <option value="reviews">Most reviewed</option>
+          </select>
+        </div>
+        <button class="kw-probe-btn" id="kw-btn" onclick="probeKeyword()">🔍 Search</button>
       </div>
 
       <div class="kw-chips-label" id="kw-chips-label" style="display:none;">Try these keywords</div>
@@ -505,31 +528,6 @@
 
       <div class="kw-results" id="kw-results">
         <div class="kw-meta-row" id="kw-meta-row"></div>
-
-        <!-- DATE FILTER BAR -->
-        <div class="kw-filter-bar" id="kw-filter-bar">
-          <span class="kw-filter-label">Released</span>
-          <div class="kw-filter-pills">
-            <span class="kw-fpill active" data-filter="all"    onclick="applyKwFilter('all')">All</span>
-            <span class="kw-fpill"        data-filter="30d"    onclick="applyKwFilter('30d')">Last 30 days</span>
-            <span class="kw-fpill"        data-filter="6mo"    onclick="applyKwFilter('6mo')">Last 6 months</span>
-            <span class="kw-fpill"        data-filter="1y"     onclick="applyKwFilter('1y')">Last year</span>
-            <span class="kw-fpill"        data-filter="1_3y"   onclick="applyKwFilter('1_3y')">1–3 years</span>
-            <span class="kw-fpill"        data-filter="3y"     onclick="applyKwFilter('3y')">3+ years old</span>
-          </div>
-          <div class="kw-sort-wrap">
-            <span class="kw-sort-label">Sort</span>
-            <select class="kw-sort-sel" id="kw-sort" onchange="applyKwFilter()">
-              <option value="rank">By rank</option>
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="rating">Best rated</option>
-              <option value="reviews">Most reviewed</option>
-            </select>
-          </div>
-          <span class="kw-filter-count" id="kw-filter-count"></span>
-        </div>
-
         <div class="kw-app-list" id="kw-app-list"></div>
         <div class="related-label" id="related-label" style="display:none;">Related keywords (extracted from results)</div>
         <div class="kw-suggestions" id="kw-related"></div>
@@ -928,34 +926,71 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 // ── KEYWORD PROBE ──────────────────────────────────────────────────
 const KW_STOP_WORDS = new Set(['the','and','for','with','app','apps','best','free','your','this','that','from','get','you','all','new','top','pro','plus','lite','more','use','using','used','make','made','easy','fast','quick','simple','great','good','just','can','not','but','are','its','our','one','any','has','was','have','will','would','been','able','use','also','into','over','like','help','let','put','see','set','now','way','day','time','keep','take','work','need','want','know','find','come','show','give','feel','tell','live','play','run','add','edit']);
 
-let kwRawResults = [];   // persisted so filters don't need re-fetch
-let kwActiveFilter = 'all';
+const DATE_RANGES = {
+  'all':  null,
+  '30d':  30  * 86400000,
+  '6mo':  183 * 86400000,
+  '1y':   365 * 86400000,
+  '1_3y': [365 * 86400000, 3 * 365 * 86400000],
+  '3y':   3   * 365 * 86400000,
+};
+
+function selectDateFilter(el) {
+  document.querySelectorAll('.kw-fpill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function getActiveFilter() {
+  const active = document.querySelector('.kw-fpill.active');
+  return active ? active.dataset.filter : 'all';
+}
+
+function filterByDate(results, filterKey) {
+  const now = Date.now();
+  const range = DATE_RANGES[filterKey];
+  if (!range) return results;
+  return results.filter(app => {
+    const d = new Date(app.releaseDate);
+    if (isNaN(d)) return false;
+    const age = now - d.getTime();
+    if (Array.isArray(range)) return age >= range[0] && age < range[1];
+    if (filterKey === '3y') return age >= range;
+    return age <= range;
+  });
+}
+
+function sortResults(results, sortKey) {
+  const copy = results.slice();
+  if (sortKey === 'newest') return copy.sort((a,b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+  if (sortKey === 'oldest') return copy.sort((a,b) => new Date(a.releaseDate) - new Date(b.releaseDate));
+  if (sortKey === 'rating')  return copy.sort((a,b) => (b.averageUserRating||0) - (a.averageUserRating||0));
+  if (sortKey === 'reviews') return copy.sort((a,b) => (b.userRatingCount||0) - (a.userRatingCount||0));
+  return copy; // 'rank' = original order
+}
 
 async function probeKeyword() {
-  const kw = document.getElementById('kw-input').value.trim();
+  const kw      = document.getElementById('kw-input').value.trim();
   const country = document.getElementById('kw-country').value;
+  const filter  = getActiveFilter();
+  const sort    = document.getElementById('kw-sort').value;
   if (!kw) { document.getElementById('kw-input').focus(); return; }
 
   const btn = document.getElementById('kw-btn');
-  btn.disabled = true; btn.textContent = '⏳ Probing…';
+  btn.disabled = true; btn.textContent = '⏳ Searching…';
   document.getElementById('kw-loading').classList.add('active');
   document.getElementById('kw-results').classList.remove('active');
   document.getElementById('kw-error').classList.remove('active');
   document.getElementById('kw-error').style.display = 'none';
-  kwRawResults = [];
-  kwActiveFilter = 'all';
-  document.querySelectorAll('.kw-fpill').forEach(p => p.classList.toggle('active', p.dataset.filter==='all'));
-  document.getElementById('kw-sort').value = 'rank';
 
   try {
-    const apple = `https://itunes.apple.com/search?term=${encodeURIComponent(kw)}&country=${country}&entity=software&limit=25&lang=en_us`;
+    // Fetch 200 results so date filtering has enough pool to work with
+    const apple = `https://itunes.apple.com/search?term=${encodeURIComponent(kw)}&country=${country}&entity=software&limit=200&lang=en_us`;
     const proxies = [
       `https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`,
       `https://corsproxy.io/?${encodeURIComponent(apple)}`,
       `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apple)}`,
     ];
-    let data = null;
-    let lastErr = '';
+    let data = null, lastErr = '';
     for (const url of proxies) {
       try {
         const res = await fetch(url);
@@ -968,96 +1003,58 @@ async function probeKeyword() {
       } catch(e) { lastErr = e.message; }
     }
     if (!data) throw new Error(`All proxies failed. Last error: ${lastErr}`);
-    const results = data.results;
-    if (!results || results.length === 0) throw new Error('No apps found for this keyword.');
-    kwRawResults = results.map((r, i) => ({ ...r, _rank: i + 1 }));
-    renderKeywordMeta(kw, kwRawResults);
-    applyKwFilter('all');
-    renderRelated(kw, kwRawResults);
+    const allResults = (data.results || []).map((r, i) => ({ ...r, _rank: i + 1 }));
+    if (!allResults.length) throw new Error('No apps found for this keyword.');
+
+    // Apply date filter + sort immediately on the full result set
+    const dateFiltered = filterByDate(allResults, filter);
+    const sorted       = sortResults(dateFiltered, sort);
+
+    renderKeywordMeta(kw, allResults, dateFiltered, filter);
+    renderKwAppList(sorted);
+    renderRelated(kw, allResults);
+    document.getElementById('kw-results').classList.add('active');
     seedChips();
   } catch(e) {
     const el = document.getElementById('kw-error');
     el.textContent = '⚠️ ' + e.message;
-    el.style.display = 'block';
-    el.classList.add('active');
+    el.style.display = 'block'; el.classList.add('active');
   } finally {
     document.getElementById('kw-loading').classList.remove('active');
-    btn.disabled = false; btn.textContent = '🔍 Probe Keyword';
+    btn.disabled = false; btn.textContent = '🔍 Search';
   }
 }
 
-function applyKwFilter(filterKey) {
-  if (filterKey !== undefined) {
-    kwActiveFilter = filterKey;
-    document.querySelectorAll('.kw-fpill').forEach(p => p.classList.toggle('active', p.dataset.filter === filterKey));
-  }
-  const sort = document.getElementById('kw-sort').value;
-  const now = Date.now();
-
-  const AGE_RANGES = {
-    'all':  null,
-    '30d':  30  * 86400000,
-    '6mo':  183 * 86400000,
-    '1y':   365 * 86400000,
-    '1_3y': [365 * 86400000, 3 * 365 * 86400000],
-    '3y':   3   * 365 * 86400000,
-  };
-
-  let filtered = kwRawResults.filter(app => {
-    const released = new Date(app.releaseDate);
-    const age = now - released.getTime();
-    const range = AGE_RANGES[kwActiveFilter];
-    if (!range) return true;
-    if (Array.isArray(range)) return age >= range[0] && age < range[1];
-    if (kwActiveFilter === '3y') return age >= range;
-    return age <= range;
-  });
-
-  // sort
-  if (sort === 'newest') {
-    filtered = filtered.slice().sort((a,b) => new Date(b.releaseDate) - new Date(a.releaseDate));
-  } else if (sort === 'oldest') {
-    filtered = filtered.slice().sort((a,b) => new Date(a.releaseDate) - new Date(b.releaseDate));
-  } else if (sort === 'rating') {
-    filtered = filtered.slice().sort((a,b) => (b.averageUserRating||0) - (a.averageUserRating||0));
-  } else if (sort === 'reviews') {
-    filtered = filtered.slice().sort((a,b) => (b.userRatingCount||0) - (a.userRatingCount||0));
-  }
-  // 'rank' = original order preserved
-
-  document.getElementById('kw-filter-count').textContent = `${filtered.length} of ${kwRawResults.length} apps`;
-  document.getElementById('kw-results').classList.add('active');
-  renderKwAppList(filtered);
-}
-
-function renderKeywordMeta(kw, results) {
-  const avgReviews = results.slice(0,10).reduce((s,r) => s+(r.userRatingCount||0), 0) / Math.min(results.length,10);
+function renderKeywordMeta(kw, allResults, filtered, filter) {
+  const avgReviews = allResults.slice(0,10).reduce((s,r) => s+(r.userRatingCount||0), 0) / Math.min(allResults.length,10);
   let compLabel, compClass;
-  if (avgReviews < 5000)       { compLabel = 'LOW competition';    compClass = 'comp-low'; }
+  if      (avgReviews < 5000)  { compLabel = 'LOW competition';    compClass = 'comp-low'; }
   else if (avgReviews < 50000) { compLabel = 'MEDIUM competition'; compClass = 'comp-med'; }
   else                          { compLabel = 'HIGH competition';   compClass = 'comp-high'; }
 
-  const freeCount = results.filter(r => r.price === 0).length;
-  const paidCount = results.length - freeCount;
-  const ratedApps = results.filter(r => r.averageUserRating);
+  const freeCount = filtered.filter(r => r.price === 0).length;
+  const paidCount = filtered.length - freeCount;
+  const ratedApps = filtered.filter(r => r.averageUserRating);
   const avgRating = ratedApps.length ? ratedApps.reduce((s,r)=>s+r.averageUserRating,0)/ratedApps.length : 0;
 
-  // Date spread stats
-  const dates = results.map(r => new Date(r.releaseDate)).filter(d=>!isNaN(d));
-  const newest = dates.length ? new Date(Math.max(...dates)) : null;
-  const oldest = dates.length ? new Date(Math.min(...dates)) : null;
-  const newestStr = newest ? newest.toISOString().split('T')[0] : '—';
-  const oldestStr = oldest ? oldest.toISOString().split('T')[0] : '—';
+  const dates = filtered.map(r => new Date(r.releaseDate)).filter(d=>!isNaN(d));
+  const newestStr = dates.length ? new Date(Math.max(...dates)).toISOString().split('T')[0] : '—';
+  const oldestStr = dates.length ? new Date(Math.min(...dates)).toISOString().split('T')[0] : '—';
+
+  const filterLabel = { all:'any time', '30d':'last 30 days', '6mo':'last 6 months', '1y':'last year', '1_3y':'1–3 years old', '3y':'3+ years old' }[filter] || '';
+  const filteredNote = filter !== 'all'
+    ? `<span style="color:var(--accent2);font-family:'DM Mono',monospace;font-size:11px">→ ${filtered.length} of ${allResults.length} match <em>${filterLabel}</em></span>`
+    : `<span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">${allResults.length} total results</span>`;
 
   document.getElementById('kw-meta-row').innerHTML = `
     <div class="kw-meta-pill"><span class="kw-meta-pill-label">KEYWORD</span><span class="kw-meta-pill-val" style="color:var(--accent2)">"${escHtml(kw)}"</span></div>
-    <div class="kw-meta-pill"><span class="kw-meta-pill-label">RESULTS</span><span class="kw-meta-pill-val">${results.length}</span></div>
+    <div class="kw-meta-pill"><span class="kw-meta-pill-label">SHOWING</span><span class="kw-meta-pill-val">${filtered.length}</span></div>
     <div class="kw-meta-pill"><span class="kw-meta-pill-label">FREE</span><span class="kw-meta-pill-val" style="color:var(--success)">${freeCount}</span></div>
     <div class="kw-meta-pill"><span class="kw-meta-pill-label">PAID</span><span class="kw-meta-pill-val" style="color:var(--accent)">${paidCount}</span></div>
     <div class="kw-meta-pill"><span class="kw-meta-pill-label">AVG RATING</span><span class="kw-meta-pill-val" style="color:var(--warning)">${avgRating.toFixed(1)}★</span></div>
-    <div class="kw-meta-pill"><span class="kw-meta-pill-label">NEWEST</span><span class="kw-meta-pill-val" style="color:var(--success)">${newestStr}</span></div>
-    <div class="kw-meta-pill"><span class="kw-meta-pill-label">OLDEST</span><span class="kw-meta-pill-val" style="color:var(--muted)">${oldestStr}</span></div>
+    ${dates.length ? `<div class="kw-meta-pill"><span class="kw-meta-pill-label">RANGE</span><span class="kw-meta-pill-val" style="font-size:10px">${oldestStr} → ${newestStr}</span></div>` : ''}
     <span class="competition-badge ${compClass}">${compLabel}</span>
+    ${filteredNote}
   `;
 }
 
@@ -1066,8 +1063,8 @@ function renderKwAppList(results) {
   listEl.innerHTML = '';
   const now = Date.now();
 
-  if (results.length === 0) {
-    listEl.innerHTML = '<div style="padding:20px 0;text-align:center;color:var(--muted);font-size:12px;font-family:\'DM Mono\',monospace;">No apps match this date filter.</div>';
+  if (!results.length) {
+    listEl.innerHTML = '<div style="padding:24px 0;text-align:center;color:var(--muted);font-size:12px;font-family:\'DM Mono\',monospace;">No apps published in this date range.<br>Try a broader filter or different keyword.</div>';
     return;
   }
 
@@ -1075,17 +1072,16 @@ function renderKwAppList(results) {
     const row = document.createElement('div');
     row.className = 'kw-app-row';
     row.style.animationDelay = Math.min(i*0.025, 0.5)+'s';
-    const isFree = app.price === 0;
-    const stars = app.averageUserRating ? '★'.repeat(Math.round(app.averageUserRating))+'☆'.repeat(5-Math.round(app.averageUserRating)) : '';
-    const icon = app.artworkUrl60 || app.artworkUrl100 || '';
+    const isFree   = app.price === 0;
+    const stars    = app.averageUserRating ? '★'.repeat(Math.round(app.averageUserRating))+'☆'.repeat(5-Math.round(app.averageUserRating)) : '';
+    const icon     = app.artworkUrl60 || app.artworkUrl100 || '';
     const storeUrl = app.trackViewUrl || '';
     const origRank = app._rank;
 
-    // Release date + age badge
     const relDate = new Date(app.releaseDate);
-    const relStr = isNaN(relDate) ? '—' : relDate.toISOString().split('T')[0];
-    const ageMs = isNaN(relDate) ? null : now - relDate.getTime();
-    let ageBadge = '';
+    const relStr  = isNaN(relDate) ? '—' : relDate.toISOString().split('T')[0];
+    const ageMs   = isNaN(relDate) ? null : now - relDate.getTime();
+    let ageBadge  = '';
     if (ageMs !== null) {
       const ageStr = ageMs < 365*86400000
         ? (ageMs < 30*86400000 ? Math.floor(ageMs/86400000)+'d' : Math.floor(ageMs/(30*86400000))+'mo')
@@ -1099,11 +1095,11 @@ function renderKwAppList(results) {
       ${icon ? `<img class="kw-icon" src="${icon}" alt="" loading="lazy" onerror="this.outerHTML='<div class=kw-icon-ph>📱</div>'">` : '<div class="kw-icon-ph">📱</div>'}
       <div style="min-width:0">
         <div class="kw-app-name">${escHtml(app.trackName||'Unknown')}</div>
-        <div class="kw-app-dev">${escHtml(app.artistName||'—')}${stars ? ' · <span style="color:var(--warning);font-size:10px">'+stars+'</span>' : ''}</div>
+        <div class="kw-app-dev">${escHtml(app.artistName||'—')}${stars?` · <span style="color:var(--warning);font-size:10px">${stars}</span>`:''}</div>
         ${ageBadge}
       </div>
       <span class="kw-app-price ${isFree?'price-free':'price-paid'}">${isFree?'FREE':'$'+app.price.toFixed(2)}</span>
-      ${storeUrl ? `<a class="kw-store-btn" href="${escHtml(storeUrl)}" target="_blank" rel="noopener" title="Open in App Store">↗</a>` : '<div></div>'}
+      ${storeUrl?`<a class="kw-store-btn" href="${escHtml(storeUrl)}" target="_blank" rel="noopener" title="Open in App Store">↗</a>`:'<div></div>'}
     `;
     listEl.appendChild(row);
   });
@@ -1114,9 +1110,8 @@ function renderRelated(kw, results) {
   results.forEach(app => {
     const text = ((app.trackName||'') + ' ' + (app.description||'') + ' ' + (app.primaryGenreName||'')).toLowerCase();
     text.replace(/[^a-z0-9\s]/g,'').split(/\s+/).forEach(w => {
-      if (w.length >= 4 && !KW_STOP_WORDS.has(w) && w !== kw.toLowerCase() && !kw.toLowerCase().includes(w)) {
+      if (w.length >= 4 && !KW_STOP_WORDS.has(w) && w !== kw.toLowerCase() && !kw.toLowerCase().includes(w))
         words[w] = (words[w]||0) + 1;
-      }
     });
   });
   const related = Object.entries(words).filter(([,c])=>c>=3).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([w])=>w);
