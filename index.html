@@ -1004,7 +1004,7 @@ function applyKwFilter(filterKey) {
   };
 
   let filtered = kwRawResults.filter(app => {
-    const released = new Date(app.currentVersionReleaseDate || app.releaseDate);
+    const released = new Date(app.releaseDate);
     const age = now - released.getTime();
     const range = AGE_RANGES[kwActiveFilter];
     if (!range) return true;
@@ -1015,9 +1015,9 @@ function applyKwFilter(filterKey) {
 
   // sort
   if (sort === 'newest') {
-    filtered = filtered.slice().sort((a,b) => new Date(b.currentVersionReleaseDate||b.releaseDate) - new Date(a.currentVersionReleaseDate||a.releaseDate));
+    filtered = filtered.slice().sort((a,b) => new Date(b.releaseDate) - new Date(a.releaseDate));
   } else if (sort === 'oldest') {
-    filtered = filtered.slice().sort((a,b) => new Date(a.currentVersionReleaseDate||a.releaseDate) - new Date(b.currentVersionReleaseDate||b.releaseDate));
+    filtered = filtered.slice().sort((a,b) => new Date(a.releaseDate) - new Date(b.releaseDate));
   } else if (sort === 'rating') {
     filtered = filtered.slice().sort((a,b) => (b.averageUserRating||0) - (a.averageUserRating||0));
   } else if (sort === 'reviews') {
@@ -1043,7 +1043,7 @@ function renderKeywordMeta(kw, results) {
   const avgRating = ratedApps.length ? ratedApps.reduce((s,r)=>s+r.averageUserRating,0)/ratedApps.length : 0;
 
   // Date spread stats
-  const dates = results.map(r => new Date(r.currentVersionReleaseDate||r.releaseDate)).filter(d=>!isNaN(d));
+  const dates = results.map(r => new Date(r.releaseDate)).filter(d=>!isNaN(d));
   const newest = dates.length ? new Date(Math.max(...dates)) : null;
   const oldest = dates.length ? new Date(Math.min(...dates)) : null;
   const newestStr = newest ? newest.toISOString().split('T')[0] : '—';
@@ -1082,15 +1082,16 @@ function renderKwAppList(results) {
     const origRank = app._rank;
 
     // Release date + age badge
-    const relDate = new Date(app.currentVersionReleaseDate || app.releaseDate);
+    const relDate = new Date(app.releaseDate);
     const relStr = isNaN(relDate) ? '—' : relDate.toISOString().split('T')[0];
     const ageMs = isNaN(relDate) ? null : now - relDate.getTime();
     let ageBadge = '';
     if (ageMs !== null) {
-      if      (ageMs < 180*86400000)  ageBadge = `<span class="age-badge age-new">🆕 ${Math.floor(ageMs/86400000)}d ago</span>`;
-      else if (ageMs < 365*86400000)  ageBadge = `<span class="age-badge age-new">${Math.floor(ageMs/(30*86400000))}mo ago</span>`;
-      else if (ageMs < 3*365*86400000) ageBadge = `<span class="age-badge age-mid">${Math.floor(ageMs/(365*86400000))}y ago</span>`;
-      else                             ageBadge = `<span class="age-badge age-old">${Math.floor(ageMs/(365*86400000))}y ago</span>`;
+      const ageStr = ageMs < 365*86400000
+        ? (ageMs < 30*86400000 ? Math.floor(ageMs/86400000)+'d' : Math.floor(ageMs/(30*86400000))+'mo')
+        : Math.floor(ageMs/(365*86400000))+'y';
+      const cls = ageMs < 180*86400000 ? 'age-new' : ageMs < 3*365*86400000 ? 'age-mid' : 'age-old';
+      ageBadge = `<span class="age-badge ${cls}" title="First published on App Store">📅 ${relStr} (${ageStr} old)</span>`;
     }
 
     row.innerHTML = `
