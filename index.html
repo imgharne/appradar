@@ -571,15 +571,31 @@ async function fetchData() {
   const lt = setInterval(() => { document.getElementById('loading-text').textContent = msgs[++li%msgs.length]; }, 700);
   try {
     const apple = `https://itunes.apple.com/${country}/rss/${chartType}/limit=${limit}/json`;
-    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const entries = data?.feed?.entry;
+    const proxies = [
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`,
+      `https://corsproxy.io/?${encodeURIComponent(apple)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apple)}`,
+    ];
+    let data = null;
+    let lastErr = '';
+    for (const url of proxies) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) { lastErr = `HTTP ${res.status}`; continue; }
+        const text = await res.text();
+        if (!text || text.trim() === '') { lastErr = 'Empty response'; continue; }
+        const parsed = JSON.parse(text);
+        if (parsed?.feed?.entry) { data = parsed; break; }
+        lastErr = 'Unexpected response format';
+      } catch(e) { lastErr = e.message; }
+    }
+    if (!data) throw new Error(`All proxies failed. Last error: ${lastErr}`);
+    const entries = data.feed.entry;
     if (!entries || entries.length === 0) throw new Error('No data returned from Apple API.');
     allApps = parseApps(entries);
     renderAll(allApps, country);
   } catch(e) {
-    showError(`Failed to fetch: ${e.message}. Check connection or try again.`);
+    showError(`Failed to fetch: ${e.message}`);
   } finally {
     clearInterval(lt); showLoading(false);
     btn.disabled = false; btn.textContent = '⚡ Fetch Rankings';
@@ -852,11 +868,26 @@ async function probeKeyword() {
 
   try {
     const apple = `https://itunes.apple.com/search?term=${encodeURIComponent(kw)}&country=${country}&entity=software&limit=25&lang=en_us`;
-    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const results = data?.results;
+    const proxies = [
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(apple)}`,
+      `https://corsproxy.io/?${encodeURIComponent(apple)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apple)}`,
+    ];
+    let data = null;
+    let lastErr = '';
+    for (const url of proxies) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) { lastErr = `HTTP ${res.status}`; continue; }
+        const text = await res.text();
+        if (!text || text.trim() === '') { lastErr = 'Empty response'; continue; }
+        const parsed = JSON.parse(text);
+        if (parsed?.results) { data = parsed; break; }
+        lastErr = 'Unexpected response format';
+      } catch(e) { lastErr = e.message; }
+    }
+    if (!data) throw new Error(`All proxies failed. Last error: ${lastErr}`);
+    const results = data.results;
     if (!results || results.length === 0) throw new Error('No apps found for this keyword.');
     renderKeywordResults(kw, country, results);
   } catch(e) {
